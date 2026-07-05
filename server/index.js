@@ -1,16 +1,14 @@
+const express = require('express');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 
+const app = express();
+const httpServer = createServer(app);
+const io = new Server(httpServer, { cors: { origin: '*' } });
+
 const PORT = process.env.PORT || 7788;
 
-const httpServer = createServer((req, res) => {
-  res.writeHead(200);
-  res.end('Wormhole signaling server');
-});
-
-const io = new Server(httpServer, {
-  cors: { origin: '*' }
-});
+app.get('/', (req, res) => res.send('Wormhole signaling server'));
 
 const peers = {};
 
@@ -25,27 +23,20 @@ io.on('connection', (socket) => {
     console.log(`${socket.id} joined room ${roomId}`);
   });
 
-  socket.on('offer', (data) => {
-    socket.to(socket.data.roomId).emit('offer', data);
-  });
-
-  socket.on('answer', (data) => {
-    socket.to(socket.data.roomId).emit('answer', data);
-  });
-
-  socket.on('candidate', (data) => {
-    socket.to(socket.data.roomId).emit('candidate', data);
-  });
+  socket.on('offer',     (data) => socket.to(socket.data.roomId).emit('offer', data));
+  socket.on('answer',    (data) => socket.to(socket.data.roomId).emit('answer', data));
+  socket.on('candidate', (data) => socket.to(socket.data.roomId).emit('candidate', data));
 
   socket.on('disconnect', () => {
-    if (socket.data.roomId) {
-      socket.to(socket.data.roomId).emit('peer-offline');
-    }
+    if (socket.data.roomId) socket.to(socket.data.roomId).emit('peer-offline');
     delete peers[socket.id];
     console.log('peer disconnected:', socket.id);
   });
 });
 
-httpServer.listen(PORT, () => {
+process.on('uncaughtException',  (err) => console.error('uncaught:', err.message));
+process.on('unhandledRejection', (err) => console.error('unhandled:', err));
+
+httpServer.listen(PORT, '0.0.0.0', () => {
   console.log(`Signaling server on :${PORT}`);
 });
