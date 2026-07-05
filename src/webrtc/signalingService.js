@@ -7,7 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // For a physical phone, replace with your PC's LAN IP (e.g. http://192.168.1.x:7788).
 // Port 7788: another dev server on this machine occupies 3000 and hops to
 // 3001, 3002, ... when its port is busy, so stay well away from that range.
-const SIGNALING_URL = process.env.SIGNALING_URL || 'http://10.0.2.2:7788';
+const SIGNALING_URL = process.env.SIGNALING_URL || 'https://wormhole-production-843f.up.railway.app';
 
 class SignalingService {
   constructor() {
