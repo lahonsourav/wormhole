@@ -23,9 +23,21 @@ io.on('connection', (socket) => {
     console.log(`${socket.id} joined room ${roomId}`);
   });
 
-  socket.on('offer',     (data) => socket.to(socket.data.roomId).emit('offer', data));
-  socket.on('answer',    (data) => socket.to(socket.data.roomId).emit('answer', data));
-  socket.on('candidate', (data) => socket.to(socket.data.roomId).emit('candidate', data));
+  socket.on('offer', (data) => {
+    console.log(`[${socket.data.roomId}] offer relayed from ${socket.id}`);
+    socket.to(socket.data.roomId).emit('offer', data);
+  });
+
+  socket.on('answer', (data) => {
+    console.log(`[${socket.data.roomId}] answer relayed from ${socket.id}`);
+    socket.to(socket.data.roomId).emit('answer', data);
+  });
+
+  socket.on('candidate', (data) => {
+    const type = data?.candidate?.match(/ typ (\w+)/)?.[1] || 'unknown';
+    console.log(`[${socket.data.roomId}] candidate relayed from ${socket.id}: typ=${type}`);
+    socket.to(socket.data.roomId).emit('candidate', data);
+  });
 
   socket.on('disconnect', () => {
     if (socket.data.roomId) socket.to(socket.data.roomId).emit('peer-offline');
