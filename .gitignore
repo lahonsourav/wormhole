@@ -1,0 +1,41 @@
+# Claude (local config and memory — never commit)
+.claude/
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# React Native
+.expo/
+dist/
+web-build/
+
+# Android
+android/build/
+android/app/build/
+android/.gradle/
+android/local.properties
+android/captures/
+*.apk
+*.aab
+*.keystore
+!android/app/debug.keystore
+
+# iOS
+ios/build/
+ios/Pods/
+ios/DerivedData/
+*.xcworkspace
+!ios/*.xcworkspace
+
+# Metro bundler cache
+.metro-health-check*
+
+# Environment
+.env
+.env.local
+.env.production
+
+# macOS
+.DS_Store
