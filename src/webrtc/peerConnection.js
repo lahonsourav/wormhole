@@ -5,15 +5,20 @@ import {
   mediaDevices,
 } from 'react-native-webrtc';
 
-const TURN_URL  = process.env.TURN_URL  || null;
-const TURN_USER = process.env.TURN_USER || 'p2p';
-const TURN_CRED = process.env.TURN_CRED || 'p2pchat';
+// Metered.ca TURN relay — fallback for NAT pairings STUN alone can't punch
+// through (common with mobile-carrier symmetric/CGNAT).
+const TURN_USER = '55610c87b35bc771bb517f8b';
+const TURN_CRED = 'N0v7gstg0fy3Vcee';
 
 const ICE_CONFIG = {
   iceServers: [
     { urls: 'stun:stun.l.google.com:19302' },
     { urls: 'stun:stun1.l.google.com:19302' },
-    ...(TURN_URL ? [{ urls: TURN_URL, username: TURN_USER, credential: TURN_CRED }] : []),
+    { urls: 'stun:stun.relay.metered.ca:80' },
+    { urls: 'turn:global.relay.metered.ca:80', username: TURN_USER, credential: TURN_CRED },
+    { urls: 'turn:global.relay.metered.ca:80?transport=tcp', username: TURN_USER, credential: TURN_CRED },
+    { urls: 'turn:global.relay.metered.ca:443', username: TURN_USER, credential: TURN_CRED },
+    { urls: 'turns:global.relay.metered.ca:443?transport=tcp', username: TURN_USER, credential: TURN_CRED },
   ],
   bundlePolicy: 'max-bundle',
 };
